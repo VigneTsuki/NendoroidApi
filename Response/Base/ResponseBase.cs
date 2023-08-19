@@ -7,9 +7,11 @@ namespace NendoroidApi.Response.Base
     public class ResponseBase
     {
         public bool Sucesso { get; private set; }
+        public string Mensagem { get; set; }
         public object Data { get; private set; }
         public List<ErrosResponse> Erros { get; private set; } = new List<ErrosResponse>();
 
+        public ResponseBase() { }
         public ResponseBase(string erro) 
         {
             Sucesso = false;

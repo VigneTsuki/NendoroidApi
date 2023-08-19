@@ -36,6 +36,9 @@ namespace NendoroidApi.Controllers
             if(!request.SenhaEReSenhaIguais())
                 return BadRequest(new ResponseBase("As senhas precisam ser iguais."));
 
+            if(await _usuarioRepository.UsuarioExiste(request.Nome))
+                return BadRequest(new ResponseBase("Usuário já existe."));
+
             var usuario = new Usuario
             {
                 Nome = request.Nome,
@@ -49,7 +52,31 @@ namespace NendoroidApi.Controllers
 
             _unitOfWork.Commit();
 
-            return Created(string.Empty, new ResponseBase(new CadastroUsuarioResponse { Mensagem = "Usuário cadastrado com sucesso" }));
+            return Created(string.Empty, new ResponseBase { Mensagem = "Usuário cadastrado com sucesso" });
+        }
+
+        [HttpPost("Inativar")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ResponseBase>> Inativar([FromQuery] int idUsuario = 0)
+        {
+            if(idUsuario == 0)
+                return BadRequest(new ResponseBase("Id usuário não informado."));
+
+            await _usuarioRepository.InativarUsuario(idUsuario);
+
+            return Ok(new ResponseBase { Mensagem = "Usuário inativado com sucesso" });
+        }
+
+        [HttpPost("Ativar")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ResponseBase>> Ativar([FromQuery] int idUsuario = 0)
+        {
+            if (idUsuario == 0)
+                return BadRequest(new ResponseBase("Id usuário não informado."));
+
+            await _usuarioRepository.AtivarUsuario(idUsuario);
+
+            return Ok(new ResponseBase { Mensagem = "Usuário ativado com sucesso" });
         }
     }
 }

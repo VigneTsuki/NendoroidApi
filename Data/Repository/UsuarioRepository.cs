@@ -2,6 +2,7 @@
 using NendoroidApi.Data.Base;
 using NendoroidApi.Data.Model;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,7 +23,7 @@ namespace NendoroidApi.Data.Repository
             string sql = @"SELECT U.ID, U.NOME, U.SENHA, UR.ID_ROLE, R.ID, R.NOME FROM USUARIO U 
                            INNER JOIN USUARIOROLE UR ON U.ID = UR.ID_USUARIO
                            INNER JOIN ROLES R ON UR.ID_ROLE = R.ID
-                           WHERE U.NOME = @NOME";
+                           WHERE U.NOME = @NOME AND ATIVO = 1";
 
             var usuarioDictionary = new Dictionary<int, Usuario>();
 
@@ -82,6 +83,32 @@ namespace NendoroidApi.Data.Repository
                 await _session.Connection.ExecuteAsync(sqlInsert,
                     new { IDROLE = idRole, IDUSUARIO = idUsuario }, _session.Transaction);
             }
+        }
+
+        public async Task<bool> UsuarioExiste(string nome)
+        {
+            string sql = "SELECT COUNT(*) FROM USUARIO WHERE NOME = @NOME AND ATIVO = 1";
+
+            var quantidade = await _session.Connection.QueryFirstOrDefaultAsync<int>(sql,
+                new { NOME = nome }, _session.Transaction);
+
+            return quantidade != 0;
+        }
+
+        public async Task InativarUsuario(int idUsuario)
+        {
+            string sql = "UPDATE USUARIO SET ATIVO = 0 WHERE ID = @IDUSUARIO";
+
+            await _session.Connection.ExecuteAsync(sql,
+                new { IDUSUARIO = idUsuario }, _session.Transaction);
+        }
+
+        public async Task AtivarUsuario(int idUsuario)
+        {
+            string sql = "UPDATE USUARIO SET ATIVO = 1 WHERE ID = @IDUSUARIO";
+
+            await _session.Connection.ExecuteAsync(sql,
+                new { IDUSUARIO = idUsuario }, _session.Transaction);
         }
     }
 }
