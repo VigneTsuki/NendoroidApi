@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NendoroidApi.Auth;
 using NendoroidApi.Data.Base;
 using NendoroidApi.Data.Repository;
+using NendoroidApi.MIddlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,11 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
 
 builder.Services.AddScoped<DbSession>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -26,6 +33,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthorization();
+
+app.UseMiddleware<ErroMiddleware>();
 
 app.MapControllers();
 

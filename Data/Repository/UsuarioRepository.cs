@@ -17,7 +17,6 @@ namespace NendoroidApi.Data.Repository
         }
 
 
-
         public async Task<Usuario?> BuscarUsuarioComRolesPorNome(string nome)
         {
             string sql = @"SELECT U.ID, U.NOME, U.SENHA, UR.ID_ROLE, R.ID, R.NOME FROM USUARIO U 
