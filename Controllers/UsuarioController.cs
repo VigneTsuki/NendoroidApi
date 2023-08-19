@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NendoroidApi.Data.Base;
 using NendoroidApi.Data.Model;
 using NendoroidApi.Data.Repository;
@@ -12,6 +13,7 @@ namespace NendoroidApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsuarioController : ControllerBase
     {
         private readonly UsuarioRepository _usuarioRepository;
@@ -24,6 +26,7 @@ namespace NendoroidApi.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<ResponseBase>> Post(CadastroUsuarioRequest request)
         {
             var validacaoRequest = request.ValidarRequest();

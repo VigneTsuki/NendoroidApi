@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using NendoroidApi.Auth;
 using NendoroidApi.Data.Base;
 using NendoroidApi.Data.Repository;
 using NendoroidApi.MIddlewares;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,17 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
+});
+
+builder.Services.AddAuthentication().AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        ValidateAudience = false,
+        ValidateIssuer = false,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Settings.Secret))
+    };
 });
 
 builder.Services.AddScoped<DbSession>();
@@ -32,9 +45,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseAuthorization();
-
+app.UseMiddleware<UnauthorizedMiddleware>();
+app.UseMiddleware<ForbiddenMiddleware>();
 app.UseMiddleware<ErroMiddleware>();
+
+app.UseAuthentication();
+
+app.UseAuthorization();
 
 app.MapControllers();
 
