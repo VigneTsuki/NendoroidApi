@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NendoroidApi.Auth;
 using NendoroidApi.Data.Base;
 using NendoroidApi.Data.Model;
 using NendoroidApi.Data.Repository;
 using NendoroidApi.Request;
-using NendoroidApi.Response;
 using NendoroidApi.Response.Base;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -18,11 +19,13 @@ namespace NendoroidApi.Controllers
     {
         private readonly UsuarioRepository _usuarioRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly string _pepper;
 
         public UsuarioController(UsuarioRepository usuarioRepository, IUnitOfWork unitOfWork)
         {
             _usuarioRepository = usuarioRepository;
             _unitOfWork = unitOfWork;
+            _pepper = Environment.GetEnvironmentVariable("PASSWORD_HASH");
         }
 
         [HttpPost]
@@ -39,10 +42,13 @@ namespace NendoroidApi.Controllers
             if(await _usuarioRepository.UsuarioExiste(request.Nome))
                 return BadRequest(new ResponseBase("Usuário já existe."));
 
+            var saltSenha = Hasher.GenerateSalt();
+
             var usuario = new Usuario
             {
                 Nome = request.Nome,
-                Senha = request.Senha,
+                HashSenha = Hasher.ComputeHash(request.Senha, saltSenha, _pepper, 3),
+                SaltSenha = saltSenha,
                 UsuarioRoles = new List<Roles> { new Roles { Nome = "User" } }
             };
 

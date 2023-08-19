@@ -2,7 +2,6 @@
 using NendoroidApi.Data.Base;
 using NendoroidApi.Data.Model;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,7 +19,7 @@ namespace NendoroidApi.Data.Repository
 
         public async Task<Usuario?> BuscarUsuarioComRolesPorNome(string nome)
         {
-            string sql = @"SELECT U.ID, U.NOME, U.SENHA, UR.ID_ROLE, R.ID, R.NOME FROM USUARIO U 
+            string sql = @"SELECT U.ID, U.NOME, U.HASHSENHA, U.SALTSENHA, UR.ID_ROLE, R.ID, R.NOME FROM USUARIO U 
                            INNER JOIN USUARIOROLE UR ON U.ID = UR.ID_USUARIO
                            INNER JOIN ROLES R ON UR.ID_ROLE = R.ID
                            WHERE U.NOME = @NOME AND ATIVO = 1";
@@ -53,11 +52,12 @@ namespace NendoroidApi.Data.Repository
 
         public async Task Cadastrar(Usuario usuario)
         {
-            string sql = "INSERT INTO USUARIO (NOME, SENHA) VALUES (@NOME, @SENHA)";
+            string sql = "INSERT INTO USUARIO (NOME, HASHSENHA, SALTSENHA) VALUES (@NOME, @HASHSENHA, @SALTSENHA)";
 
             var parametros = new DynamicParameters();
             parametros.Add(name: "NOME", value: usuario.Nome);
-            parametros.Add(name: "SENHA", value: usuario.Senha);
+            parametros.Add(name: "HASHSENHA", value: usuario.HashSenha);
+            parametros.Add(name: "SALTSENHA", value: usuario.SaltSenha);
 
             await _session.Connection.ExecuteAsync(sql, parametros, _session.Transaction);
 
