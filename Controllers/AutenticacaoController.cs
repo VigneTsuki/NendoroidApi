@@ -15,7 +15,6 @@ namespace NendoroidApi.Controllers
         private readonly UsuarioRepository _usuarioRepository;
         private readonly TokenService _tokenService;
 
-
         public AutenticacaoController(UsuarioRepository usuarioRepository, TokenService tokenService)
         {
             _usuarioRepository = usuarioRepository;
