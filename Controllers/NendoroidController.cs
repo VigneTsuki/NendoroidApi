@@ -5,6 +5,7 @@ using NendoroidApi.Data.Repository;
 using NendoroidApi.Enum;
 using NendoroidApi.Request;
 using NendoroidApi.Response.Base;
+using Org.BouncyCastle.Asn1.Ocsp;
 using System;
 using System.Globalization;
 using System.Threading.Tasks;
@@ -56,6 +57,21 @@ namespace NendoroidApi.Controllers
             await _nendoroidRepository.CadastrarNendoroid(nendoroid);
 
             return Created(string.Empty, new ResponseBase { Mensagem = "Nendoroid cadastrada com sucesso" });
+        }
+
+        [HttpDelete]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ResponseBase>> Delete([FromQuery] string numero)
+        {
+            if (numero == null)
+                return BadRequest("O campo Numero é obrigatório.");
+
+            if (!await _nendoroidRepository.NendoroidExiste(numero))
+                return BadRequest(new ResponseBase("Nendoroid não está cadastrada."));
+
+            await _nendoroidRepository.Deletar(numero);
+
+            return Ok(new ResponseBase { Mensagem = "Nendoroid deletada com sucesso" });
         }
     }
 }

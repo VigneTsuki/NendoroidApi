@@ -40,5 +40,12 @@ namespace NendoroidApi.Data.Repository
 
             return quantidade != 0;
         }
+
+        public async Task Deletar(string numero)
+        {
+            string sql = "DELETE FROM NENDOROID WHERE NUMERO = @NUMERO";
+
+            await _session.Connection.ExecuteAsync(sql, new { NUMERO = numero}, _session.Transaction);
+        }
     }
 }
