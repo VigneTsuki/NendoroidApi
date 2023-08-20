@@ -89,7 +89,7 @@ namespace NendoroidApi.Data.Repository
         {
             string sql = "SELECT COUNT(*) FROM USUARIO WHERE NOME = @NOME AND ATIVO = 1";
 
-            var quantidade = await _session.Connection.QueryFirstOrDefaultAsync<int>(sql,
+            var quantidade = await _session.Connection.QuerySingleOrDefaultAsync<int>(sql,
                 new { NOME = nome }, _session.Transaction);
 
             return quantidade != 0;
