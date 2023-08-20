@@ -55,7 +55,7 @@ namespace NendoroidApi.Controllers
 
             await _nendoroidRepository.CadastrarNendoroid(nendoroid);
 
-            return Ok(request);
+            return Created(string.Empty, new ResponseBase { Mensagem = "Nendoroid cadastrada com sucesso" });
         }
     }
 }
