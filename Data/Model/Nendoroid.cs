@@ -1,5 +1,4 @@
-﻿using NendoroidApi.Enum;
-using System;
+﻿using System;
 
 namespace NendoroidApi.Data.Model
 {
@@ -12,6 +11,6 @@ namespace NendoroidApi.Data.Model
         public DateTime? DataLancamento { get; set; }
         public string? Escultor { get; set; }
         public string? Cooperacao { get; set; }
-        public ETipoSerie IdSerie { get; set; }
+        public int IdSerie { get; set; }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Dapper;
 using NendoroidApi.Data.Base;
 using NendoroidApi.Data.Model;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace NendoroidApi.Data.Repository
 {
@@ -46,6 +48,30 @@ namespace NendoroidApi.Data.Repository
             string sql = "DELETE FROM NENDOROID WHERE NUMERO = @NUMERO";
 
             await _session.Connection.ExecuteAsync(sql, new { NUMERO = numero}, _session.Transaction);
+        }
+
+        public async Task<int> TotalNendorodoids()
+        {
+            string sql = "SELECT COUNT(*) FROM NENDOROID;";
+
+            var quantidade = await _session.Connection.QuerySingleOrDefaultAsync<int>(sql,
+                null, _session.Transaction);
+
+            return quantidade;
+        }
+
+        public async Task<IEnumerable<Nendoroid>> BuscarNendoroidsPaginado(int numeroPagina, int TamanhoPagina)
+        {
+            string sql = "SELECT * FROM NENDOROID LIMIT @SIZE OFFSET @PAGE;";
+
+            var parametros = new DynamicParameters();
+            parametros.Add("SIZE", TamanhoPagina);
+            parametros.Add("PAGE", (numeroPagina - 1) * TamanhoPagina);
+
+            var nendoroids = await _session.Connection.QueryAsync<Nendoroid>(sql,
+                parametros, _session.Transaction);
+
+            return nendoroids;
         }
     }
 }

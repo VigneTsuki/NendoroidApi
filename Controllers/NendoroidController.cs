@@ -4,8 +4,11 @@ using NendoroidApi.Data.Model;
 using NendoroidApi.Data.Repository;
 using NendoroidApi.Enum;
 using NendoroidApi.Request;
+using NendoroidApi.Response;
 using NendoroidApi.Response.Base;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,10 +21,12 @@ namespace NendoroidApi.Controllers
     public class NendoroidController : ControllerBase
     {
         private readonly NendoroidRepository _nendoroidRepository;
+        private readonly SerieRepository _serieRepository;
 
-        public NendoroidController(NendoroidRepository nendoroidRepository)
+        public NendoroidController(NendoroidRepository nendoroidRepository, SerieRepository serieRepository)
         {
             _nendoroidRepository = nendoroidRepository;
+            _serieRepository = serieRepository;
         }
 
         [HttpPost]
@@ -51,7 +56,7 @@ namespace NendoroidApi.Controllers
                 DataLancamento = data ?? null,
                 Escultor = request.Escultor,
                 Cooperacao = request.Cooperacao,
-                IdSerie = (ETipoSerie) request.IdSerie!,
+                IdSerie = request.IdSerie!,
             };
 
             await _nendoroidRepository.CadastrarNendoroid(nendoroid);
@@ -61,7 +66,7 @@ namespace NendoroidApi.Controllers
 
         [HttpDelete]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<ResponseBase>> Delete([FromQuery] string numero = null)
+        public async Task<ActionResult<ResponseBase>> Delete([FromQuery] string? numero = null)
         {
             if (numero == null)
                 return BadRequest(new ResponseBase(false, "O campo Numero é obrigatório."));
@@ -72,6 +77,31 @@ namespace NendoroidApi.Controllers
             await _nendoroidRepository.Deletar(numero);
 
             return Ok(new ResponseBase(true, "Nendoroid deletada com sucesso"));
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<BuscaNendoroidResponse>> Get([FromQuery] int numeroPagina = 1, int tamanhoPagina = 10)
+        {
+            if(tamanhoPagina > 10)
+                return BadRequest(new ResponseBase(false, "O campo TamanhoPagina não pode ser maior que 10."));
+
+            var nendoroids = await _nendoroidRepository.BuscarNendoroidsPaginado(numeroPagina, tamanhoPagina);
+            var totalNendoroids = await _nendoroidRepository.TotalNendorodoids();
+
+            var resposta = new BuscaNendoroidResponse(numeroPagina, tamanhoPagina, totalNendoroids);
+
+            foreach (var nendo in nendoroids)
+            {
+                var tituloSerie = await _serieRepository.BuscarTituloPorIdSerie(nendo.IdSerie);
+
+                var nendoroid = new NendoroidResponse(nendo.Id, nendo.Nome, nendo.Numero, nendo.PrecoJpy,
+                    nendo.DataLancamento, nendo.Escultor, nendo.Cooperacao, nendo.IdSerie, tituloSerie);
+
+                resposta.Nendoroids.Add(nendoroid);
+            }
+
+            return Ok(new ResponseBase(true, null, resposta));
         }
     }
 }

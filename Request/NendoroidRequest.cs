@@ -1,7 +1,5 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
-using NendoroidApi.Enum;
-using System;
 
 namespace NendoroidApi.Request
 {
@@ -13,7 +11,7 @@ namespace NendoroidApi.Request
         public string? DataLancamento { get; set; }
         public string? Escultor { get; set; }
         public string? Cooperacao { get; set; }
-        public ETipoSerie? IdSerie { get; set; }
+        public int IdSerie { get; set; }
 
         public ValidationResult ValidarRequest()
         {
@@ -66,10 +64,8 @@ namespace NendoroidApi.Request
             });
 
             RuleFor(request => request.IdSerie)
-                .NotEmpty()
-                .WithMessage("O campo IdSerie é obrigatório.")
-                .IsInEnum()
-                .WithMessage("O campo IdSerie precisa ter o valor entre 1 e 4.");
+                .GreaterThan(0)
+                .WithMessage("O campo IdSerie é obrigatório.");
         }
     }
 }

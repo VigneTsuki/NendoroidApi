@@ -36,6 +36,7 @@ builder.Services.AddScoped<DbSession>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<UsuarioRepository>();
 builder.Services.AddTransient<NendoroidRepository>();
+builder.Services.AddTransient<SerieRepository>();
 builder.Services.AddTransient<TokenService>();
 
 var app = builder.Build();
