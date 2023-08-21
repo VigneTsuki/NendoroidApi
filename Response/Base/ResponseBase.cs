@@ -1,44 +1,18 @@
-﻿using FluentValidation.Results;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace NendoroidApi.Response.Base
 {
     public class ResponseBase
     {
         public bool Sucesso { get; private set; }
-        public string Mensagem { get; set; }
+        public string? Mensagem { get; set; }
         public object Data { get; private set; }
-        public List<ErrosResponse> Erros { get; private set; } = new List<ErrosResponse>();
 
-        public ResponseBase() { }
-        public ResponseBase(string erro) 
+        public ResponseBase(bool sucesso, string? mensagem, object? data = null) 
         {
-            Sucesso = false;
-            Data = Array.Empty<object>();
-            AdicionarErro(erro);
+            Sucesso = sucesso;
+            Mensagem = mensagem ?? null;
+            Data = data ?? Array.Empty<object>();
         }
-
-        public ResponseBase(List<ValidationFailure> erros)
-        {
-            Sucesso = false;
-            Data = Array.Empty<object>();
-            foreach (var r in erros)
-                AdicionarErro(r.ErrorMessage);
-        }
-
-        public ResponseBase(object data)
-        {
-            Sucesso = true;
-            Data = data;
-        }
-
-        private void AdicionarErro(string mensagemErro) => Erros.Add(new ErrosResponse(mensagemErro));
-    }
-
-    public class ErrosResponse
-    {
-        public string Mensagem { get; set; }
-        public ErrosResponse(string mensagem) { Mensagem = mensagem; }
     }
 }

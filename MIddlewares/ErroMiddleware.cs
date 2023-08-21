@@ -33,9 +33,9 @@ namespace NendoroidApi.MIddlewares
             ResponseBase responseBase;
 
             if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-                responseBase = new ResponseBase($"{ex.Message} {ex?.InnerException?.Message}");
+                responseBase = new ResponseBase(false, $"{ex.Message} {ex?.InnerException?.Message}");
             else
-                responseBase = new ResponseBase("Ocorreu um erro no processamento da sua requisição. Por favor tente novamente mais tarde.");
+                responseBase = new ResponseBase(false, "Ocorreu um erro no processamento da sua requisição. Por favor tente novamente mais tarde.");
 
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 

@@ -19,9 +19,9 @@ namespace NendoroidApi.Data.Repository
 
         public async Task<Usuario?> BuscarUsuarioComRolesPorNome(string nome)
         {
-            string sql = @"SELECT U.ID, U.NOME, U.HASHSENHA, U.SALTSENHA, UR.ID_ROLE, R.ID, R.NOME FROM USUARIO U 
-                           INNER JOIN USUARIOROLE UR ON U.ID = UR.ID_USUARIO
-                           INNER JOIN ROLES R ON UR.ID_ROLE = R.ID
+            string sql = @"SELECT U.ID, U.NOME, U.HASHSENHA, U.SALTSENHA, UR.IDROLE, R.ID, R.NOME FROM USUARIO U 
+                           INNER JOIN USUARIOROLE UR ON U.ID = UR.IDUSUARIO
+                           INNER JOIN ROLES R ON UR.IDROLE = R.ID
                            WHERE U.NOME = @NOME AND ATIVO = 1";
 
             var usuarioDictionary = new Dictionary<int, Usuario>();
@@ -43,7 +43,7 @@ namespace NendoroidApi.Data.Repository
                     return usuarioEntry;
                 },
                 param: parametros,
-                splitOn: "ID, ID_ROLE, ID",
+                splitOn: "ID, IDROLE, ID",
                 transaction: _session.Transaction
             );
 
@@ -78,7 +78,7 @@ namespace NendoroidApi.Data.Repository
                 var idRole = await _session.Connection.QueryFirstOrDefaultAsync<Guid>(sql,
                     new { NOME = r.Nome }, _session.Transaction);
 
-                string sqlInsert = "INSERT INTO USUARIOROLE (ID_ROLE, ID_USUARIO) VALUES (@IDROLE, @IDUSUARIO)";
+                string sqlInsert = "INSERT INTO USUARIOROLE (IDROLE, IDUSUARIO) VALUES (@IDROLE, @IDUSUARIO)";
 
                 await _session.Connection.ExecuteAsync(sqlInsert,
                     new { IDROLE = idRole, IDUSUARIO = idUsuario }, _session.Transaction);
@@ -87,7 +87,7 @@ namespace NendoroidApi.Data.Repository
 
         public async Task<bool> UsuarioExiste(string nome)
         {
-            string sql = "SELECT COUNT(*) FROM USUARIO WHERE NOME = @NOME AND ATIVO = 1";
+            string sql = "SELECT COUNT(*) FROM USUARIO WHERE NOME = @NOME";
 
             var quantidade = await _session.Connection.QuerySingleOrDefaultAsync<int>(sql,
                 new { NOME = nome }, _session.Transaction);

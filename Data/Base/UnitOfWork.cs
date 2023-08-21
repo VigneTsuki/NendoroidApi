@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace NendoroidApi.Data.Base
+﻿namespace NendoroidApi.Data.Base
 {
     public sealed class UnitOfWork : IUnitOfWork
     {

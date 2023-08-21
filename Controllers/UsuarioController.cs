@@ -8,6 +8,7 @@ using NendoroidApi.Request;
 using NendoroidApi.Response.Base;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace NendoroidApi.Controllers
@@ -34,13 +35,13 @@ namespace NendoroidApi.Controllers
         {
             var validacaoRequest = request.ValidarRequest();
             if (!validacaoRequest.IsValid)
-                return BadRequest(new ResponseBase(validacaoRequest.Errors));
+                return BadRequest(new ResponseBase(false, validacaoRequest.Errors.FirstOrDefault()?.ErrorMessage));
 
             if(!request.SenhaEReSenhaIguais())
-                return BadRequest(new ResponseBase("As senhas precisam ser iguais."));
+                return BadRequest(new ResponseBase(false, "As senhas precisam ser iguais."));
 
             if(await _usuarioRepository.UsuarioExiste(request.Nome))
-                return BadRequest(new ResponseBase("Usuário já existe."));
+                return BadRequest(new ResponseBase(false, "Usuário já existe."));
 
             var saltSenha = Hasher.GenerateSalt();
 
@@ -58,7 +59,7 @@ namespace NendoroidApi.Controllers
 
             _unitOfWork.Commit();
 
-            return Created(string.Empty, new ResponseBase { Mensagem = "Usuário cadastrado com sucesso" });
+            return Created(string.Empty, new ResponseBase(true, "Usuário cadastrado com sucesso"));
         }
 
         [HttpPost("Inativar")]
@@ -66,11 +67,11 @@ namespace NendoroidApi.Controllers
         public async Task<ActionResult<ResponseBase>> Inativar([FromQuery] int idUsuario = 0)
         {
             if(idUsuario == 0)
-                return BadRequest(new ResponseBase("Id usuário não informado."));
+                return BadRequest(new ResponseBase(false, "O campo idUsuario é obrigatório."));
 
             await _usuarioRepository.InativarUsuario(idUsuario);
 
-            return Ok(new ResponseBase { Mensagem = "Usuário inativado com sucesso" });
+            return Ok(new ResponseBase(true, "Usuário inativado com sucesso"));
         }
 
         [HttpPost("Ativar")]
@@ -78,11 +79,11 @@ namespace NendoroidApi.Controllers
         public async Task<ActionResult<ResponseBase>> Ativar([FromQuery] int idUsuario = 0)
         {
             if (idUsuario == 0)
-                return BadRequest(new ResponseBase("Id usuário não informado."));
+                return BadRequest(new ResponseBase(false, "O campo idUsuario é obrigatório."));
 
             await _usuarioRepository.AtivarUsuario(idUsuario);
 
-            return Ok(new ResponseBase { Mensagem = "Usuário ativado com sucesso" });
+            return Ok(new ResponseBase(true, "Usuário ativado com sucesso"));
         }
     }
 }

@@ -5,9 +5,9 @@ using NendoroidApi.Data.Repository;
 using NendoroidApi.Enum;
 using NendoroidApi.Request;
 using NendoroidApi.Response.Base;
-using Org.BouncyCastle.Asn1.Ocsp;
 using System;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace NendoroidApi.Controllers
@@ -29,11 +29,11 @@ namespace NendoroidApi.Controllers
         public async Task<ActionResult<ResponseBase>> Post(NendoroidRequest request)
         {
             if(request == null)
-                return BadRequest(new ResponseBase("Há algo errado com a requisição enviada. Por favor, faça os ajustes e tente novamente."));
+                return BadRequest(new ResponseBase(false, "Há algo errado com a requisição enviada. Por favor, faça os ajustes e tente novamente."));
             
             var validacaoRequest = request.ValidarRequest();
             if (!validacaoRequest.IsValid)
-                return BadRequest(new ResponseBase(validacaoRequest.Errors));
+                return BadRequest(new ResponseBase(false, validacaoRequest.Errors.FirstOrDefault()?.ErrorMessage));
 
             DateTime? data = null;
 
@@ -41,7 +41,7 @@ namespace NendoroidApi.Controllers
                 data = DateTime.ParseExact(request.DataLancamento!, "yyyy-MM", CultureInfo.InvariantCulture);
 
             if(await _nendoroidRepository.NendoroidExiste(request.Numero))
-                return BadRequest(new ResponseBase("Nendoroid já está cadastrada."));
+                return BadRequest(new ResponseBase(false, "Nendoroid já está cadastrada."));
 
             var nendoroid = new Nendoroid
             {
@@ -56,22 +56,22 @@ namespace NendoroidApi.Controllers
 
             await _nendoroidRepository.CadastrarNendoroid(nendoroid);
 
-            return Created(string.Empty, new ResponseBase { Mensagem = "Nendoroid cadastrada com sucesso" });
+            return Created(string.Empty, new ResponseBase(true, "Nendoroid cadastrada com sucesso"));
         }
 
         [HttpDelete]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<ResponseBase>> Delete([FromQuery] string numero)
+        public async Task<ActionResult<ResponseBase>> Delete([FromQuery] string numero = null)
         {
             if (numero == null)
-                return BadRequest("O campo Numero é obrigatório.");
+                return BadRequest(new ResponseBase(false, "O campo Numero é obrigatório."));
 
             if (!await _nendoroidRepository.NendoroidExiste(numero))
-                return BadRequest(new ResponseBase("Nendoroid não está cadastrada."));
+                return BadRequest(new ResponseBase(false, "Nendoroid não está cadastrada."));
 
             await _nendoroidRepository.Deletar(numero);
 
-            return Ok(new ResponseBase { Mensagem = "Nendoroid deletada com sucesso" });
+            return Ok(new ResponseBase(true, "Nendoroid deletada com sucesso"));
         }
     }
 }

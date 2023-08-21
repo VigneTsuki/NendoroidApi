@@ -20,7 +20,7 @@ namespace NendoroidApi.MIddlewares
 
             if (context.Response.StatusCode == 401)
             {
-                var result = JsonConvert.SerializeObject(new ResponseBase("Não autenticado."));
+                var result = JsonConvert.SerializeObject(new ResponseBase(false, "Não autenticado."));
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsync(result);
             }

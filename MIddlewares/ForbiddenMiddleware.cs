@@ -20,7 +20,7 @@ namespace NendoroidApi.MIddlewares
 
             if (context.Response.StatusCode == 403)
             {
-                var result = JsonConvert.SerializeObject(new ResponseBase("Não autorizado."));
+                var result = JsonConvert.SerializeObject(new ResponseBase(false, "Não autorizado."));
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsync(result);
             }
