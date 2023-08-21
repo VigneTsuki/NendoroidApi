@@ -3,7 +3,7 @@ using FluentValidation.Results;
 
 namespace NendoroidApi.Request
 {
-    public class NendoroidRequest
+    public class CadastroNendoroidRequest
     {
         public string Nome { get; set; }
         public string Numero { get; set; }
@@ -19,7 +19,7 @@ namespace NendoroidApi.Request
         }
     }
 
-    public class NendoroidRequestValidator : AbstractValidator<NendoroidRequest>
+    public class NendoroidRequestValidator : AbstractValidator<CadastroNendoroidRequest>
     {
         public NendoroidRequestValidator()
         { 

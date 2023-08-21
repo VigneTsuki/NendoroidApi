@@ -67,7 +67,7 @@ namespace NendoroidApi.Controllers
         public async Task<ActionResult<ResponseBase>> Inativar([FromQuery] int idUsuario = 0)
         {
             if(idUsuario == 0)
-                return BadRequest(new ResponseBase(false, "O campo idUsuario é obrigatório."));
+                return BadRequest(new ResponseBase(false, "O campo IdUsuario é obrigatório."));
 
             await _usuarioRepository.InativarUsuario(idUsuario);
 
@@ -79,7 +79,7 @@ namespace NendoroidApi.Controllers
         public async Task<ActionResult<ResponseBase>> Ativar([FromQuery] int idUsuario = 0)
         {
             if (idUsuario == 0)
-                return BadRequest(new ResponseBase(false, "O campo idUsuario é obrigatório."));
+                return BadRequest(new ResponseBase(false, "O campo IdUsuario é obrigatório."));
 
             await _usuarioRepository.AtivarUsuario(idUsuario);
 

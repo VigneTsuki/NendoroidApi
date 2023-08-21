@@ -73,5 +73,25 @@ namespace NendoroidApi.Data.Repository
 
             return nendoroids;
         }
+
+        public async Task<Nendoroid?> BuscarNendoroidPorId(int id)
+        {
+            string sql = "SELECT * FROM NENDOROID WHERE ID = @ID;";
+
+            var nendoroid = await _session.Connection.QueryFirstOrDefaultAsync<Nendoroid?>(sql,
+                new { ID = id }, _session.Transaction);
+
+            return nendoroid;
+        }
+
+        public async Task<Nendoroid?> BuscarNendoroidPorNumero(string numero)
+        {
+            string sql = "SELECT * FROM NENDOROID WHERE NUMERO = @NUMERO;";
+
+            var nendoroid = await _session.Connection.QueryFirstOrDefaultAsync<Nendoroid?>(sql,
+                new { NUMERO = numero }, _session.Transaction);
+
+            return nendoroid;
+        }
     }
 }

@@ -2,13 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using NendoroidApi.Data.Model;
 using NendoroidApi.Data.Repository;
-using NendoroidApi.Enum;
 using NendoroidApi.Request;
 using NendoroidApi.Response;
 using NendoroidApi.Response.Base;
-using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,7 +28,7 @@ namespace NendoroidApi.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<ResponseBase>> Post(NendoroidRequest request)
+        public async Task<ActionResult<ResponseBase>> Post(CadastroNendoroidRequest request)
         {
             if(request == null)
                 return BadRequest(new ResponseBase(false, "Há algo errado com a requisição enviada. Por favor, faça os ajustes e tente novamente."));
@@ -100,6 +97,46 @@ namespace NendoroidApi.Controllers
 
                 resposta.Nendoroids.Add(nendoroid);
             }
+
+            return Ok(new ResponseBase(true, null, resposta));
+        }
+
+        [HttpGet("BuscarPorId")]
+        [Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<NendoroidResponse>> BuscarPorId([FromQuery] int id = 0)
+        {
+            if (id == 0)
+                return BadRequest(new ResponseBase(false, "O campo Id é obrigatório."));
+
+            var nendoroid = await _nendoroidRepository.BuscarNendoroidPorId(id);
+
+            if(nendoroid == null)
+                return NotFound(new ResponseBase(false, "Nendoroid não encontrada."));
+
+            var tituloSerie = await _serieRepository.BuscarTituloPorIdSerie(nendoroid.IdSerie);
+
+            var resposta = new NendoroidResponse(nendoroid.Id, nendoroid.Nome, nendoroid.Numero, nendoroid.PrecoJpy,
+                nendoroid.DataLancamento, nendoroid.Escultor, nendoroid.Cooperacao, nendoroid.IdSerie, tituloSerie);
+
+            return Ok(new ResponseBase(true, null, resposta));
+        }
+
+        [HttpGet("BuscarPorNumero")]
+        [Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<NendoroidResponse>> BuscarPorNumero([FromQuery] string? numero = null)
+        {
+            if (numero == null)
+                return BadRequest(new ResponseBase(false, "O campo Numero é obrigatório."));
+
+            var nendoroid = await _nendoroidRepository.BuscarNendoroidPorNumero(numero);
+
+            if (nendoroid == null)
+                return NotFound(new ResponseBase(false, "Nendoroid não encontrada."));
+
+            var tituloSerie = await _serieRepository.BuscarTituloPorIdSerie(nendoroid.IdSerie);
+
+            var resposta = new NendoroidResponse(nendoroid.Id, nendoroid.Nome, nendoroid.Numero, nendoroid.PrecoJpy,
+                nendoroid.DataLancamento, nendoroid.Escultor, nendoroid.Cooperacao, nendoroid.IdSerie, tituloSerie);
 
             return Ok(new ResponseBase(true, null, resposta));
         }
