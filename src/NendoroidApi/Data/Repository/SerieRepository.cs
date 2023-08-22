@@ -1,10 +1,11 @@
 ﻿using Dapper;
 using NendoroidApi.Data.Base;
+using NendoroidApi.Data.Interface;
 using System.Threading.Tasks;
 
 namespace NendoroidApi.Data.Repository
 {
-    public class SerieRepository
+    public class SerieRepository : ISerieRepository
     {
         private readonly DbSession _session;
 

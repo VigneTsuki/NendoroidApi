@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using NendoroidApi.Data.Base;
+using NendoroidApi.Data.Interface;
 using NendoroidApi.Data.Model;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace NendoroidApi.Data.Repository
 {
-    public class UsuarioRepository
+    public class UsuarioRepository : IUsuarioRepository
     {
         private readonly DbSession _session;
 

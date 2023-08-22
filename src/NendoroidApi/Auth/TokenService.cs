@@ -8,7 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace NendoroidApi.Auth
 {
-    public class TokenService
+    public class TokenService : ITokenService
     {
         public string CreateToken(Usuario usuario)
         {

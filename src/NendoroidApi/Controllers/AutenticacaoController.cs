@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NendoroidApi.Auth;
-using NendoroidApi.Data.Repository;
+using NendoroidApi.Data.Interface;
 using NendoroidApi.Request;
 using NendoroidApi.Response;
 using NendoroidApi.Response.Base;
@@ -16,11 +16,11 @@ namespace NendoroidApi.Controllers
     [Route("api/[controller]")]
     public class AutenticacaoController : ControllerBase
     {
-        private readonly UsuarioRepository _usuarioRepository;
-        private readonly TokenService _tokenService;
+        private readonly IUsuarioRepository _usuarioRepository;
+        private readonly ITokenService _tokenService;
         private readonly string _pepper;
 
-        public AutenticacaoController(UsuarioRepository usuarioRepository, TokenService tokenService)
+        public AutenticacaoController(IUsuarioRepository usuarioRepository, ITokenService tokenService)
         {
             _usuarioRepository = usuarioRepository;
             _tokenService = tokenService;

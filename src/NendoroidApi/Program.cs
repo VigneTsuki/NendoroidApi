@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using NendoroidApi.Auth;
 using NendoroidApi.Data.Base;
+using NendoroidApi.Data.Interface;
 using NendoroidApi.Data.Repository;
 using NendoroidApi.MIddlewares;
 using System.Text;
@@ -34,10 +35,10 @@ builder.Services.AddAuthentication().AddJwtBearer(options =>
 
 builder.Services.AddScoped<DbSession>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-builder.Services.AddTransient<UsuarioRepository>();
-builder.Services.AddTransient<NendoroidRepository>();
-builder.Services.AddTransient<SerieRepository>();
-builder.Services.AddTransient<TokenService>();
+builder.Services.AddTransient<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddTransient<INendoroidRepository, NendoroidRepository>();
+builder.Services.AddTransient<ISerieRepository, SerieRepository>();
+builder.Services.AddTransient<ITokenService, TokenService>();
 
 var app = builder.Build();
 

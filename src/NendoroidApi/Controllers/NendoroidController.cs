@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NendoroidApi.Data.Interface;
 using NendoroidApi.Data.Model;
-using NendoroidApi.Data.Repository;
 using NendoroidApi.Request;
 using NendoroidApi.Response;
 using NendoroidApi.Response.Base;
@@ -18,10 +18,10 @@ namespace NendoroidApi.Controllers
     [Authorize]
     public class NendoroidController : ControllerBase
     {
-        private readonly NendoroidRepository _nendoroidRepository;
-        private readonly SerieRepository _serieRepository;
+        private readonly INendoroidRepository _nendoroidRepository;
+        private readonly ISerieRepository _serieRepository;
 
-        public NendoroidController(NendoroidRepository nendoroidRepository, SerieRepository serieRepository)
+        public NendoroidController(INendoroidRepository nendoroidRepository, ISerieRepository serieRepository)
         {
             _nendoroidRepository = nendoroidRepository;
             _serieRepository = serieRepository;

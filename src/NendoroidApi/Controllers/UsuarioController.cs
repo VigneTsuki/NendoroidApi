@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NendoroidApi.Auth;
 using NendoroidApi.Data.Base;
+using NendoroidApi.Data.Interface;
 using NendoroidApi.Data.Model;
-using NendoroidApi.Data.Repository;
 using NendoroidApi.Request;
 using NendoroidApi.Response.Base;
 using System;
@@ -19,11 +19,11 @@ namespace NendoroidApi.Controllers
     [Authorize]
     public class UsuarioController : ControllerBase
     {
-        private readonly UsuarioRepository _usuarioRepository;
+        private readonly IUsuarioRepository _usuarioRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly string _pepper;
 
-        public UsuarioController(UsuarioRepository usuarioRepository, IUnitOfWork unitOfWork)
+        public UsuarioController(IUsuarioRepository usuarioRepository, IUnitOfWork unitOfWork)
         {
             _usuarioRepository = usuarioRepository;
             _unitOfWork = unitOfWork;

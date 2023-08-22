@@ -1,13 +1,13 @@
 ﻿using Dapper;
 using NendoroidApi.Data.Base;
+using NendoroidApi.Data.Interface;
 using NendoroidApi.Data.Model;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace NendoroidApi.Data.Repository
 {
-    public class NendoroidRepository
+    public class NendoroidRepository : INendoroidRepository
     {
         private readonly DbSession _session;
 
