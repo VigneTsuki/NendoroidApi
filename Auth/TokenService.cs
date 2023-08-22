@@ -24,6 +24,8 @@ namespace NendoroidApi.Auth
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var token = new JwtSecurityToken(
+                    issuer: Settings.Issuer,
+                    audience: Settings.Audience,
                     claims: claims,
                     expires: DateTime.Now.AddHours(2),
                     signingCredentials: creds
