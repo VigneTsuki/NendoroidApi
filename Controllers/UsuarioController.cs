@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NendoroidApi.Auth;
 using NendoroidApi.Data.Base;
@@ -31,6 +32,8 @@ namespace NendoroidApi.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResponseBase>> Post(CadastroUsuarioRequest request)
         {
             var validacaoRequest = request.ValidarRequest();
@@ -64,6 +67,8 @@ namespace NendoroidApi.Controllers
 
         [HttpPost("Inativar")]
         [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResponseBase>> Inativar([FromQuery] int idUsuario = 0)
         {
             if(idUsuario == 0)
@@ -76,6 +81,8 @@ namespace NendoroidApi.Controllers
 
         [HttpPost("Ativar")]
         [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResponseBase>> Ativar([FromQuery] int idUsuario = 0)
         {
             if (idUsuario == 0)

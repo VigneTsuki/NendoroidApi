@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NendoroidApi.Data.Model;
 using NendoroidApi.Data.Repository;
@@ -28,6 +29,8 @@ namespace NendoroidApi.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult<ResponseBase>> Post(CadastroNendoroidRequest request)
         {
             if(request == null)
@@ -63,6 +66,8 @@ namespace NendoroidApi.Controllers
 
         [HttpDelete]
         [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResponseBase>> Delete([FromQuery] string? numero = null)
         {
             if (numero == null)
@@ -78,6 +83,8 @@ namespace NendoroidApi.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin, User")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<BuscaNendoroidResponse>> Get([FromQuery] int numeroPagina = 1, int tamanhoPagina = 10)
         {
             if(tamanhoPagina > 10)
@@ -103,6 +110,9 @@ namespace NendoroidApi.Controllers
 
         [HttpGet("BuscarPorId")]
         [Authorize(Roles = "Admin, User")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<NendoroidResponse>> BuscarPorId([FromQuery] int id = 0)
         {
             if (id == 0)
@@ -123,6 +133,9 @@ namespace NendoroidApi.Controllers
 
         [HttpGet("BuscarPorNumero")]
         [Authorize(Roles = "Admin, User")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<NendoroidResponse>> BuscarPorNumero([FromQuery] string? numero = null)
         {
             if (numero == null)

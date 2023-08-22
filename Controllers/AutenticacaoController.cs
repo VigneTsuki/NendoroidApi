@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NendoroidApi.Auth;
 using NendoroidApi.Data.Repository;
@@ -28,6 +29,8 @@ namespace NendoroidApi.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResponseBase>> Post(LoginRequest request)
         {
             var validacaoRequest = request.ValidarRequest();
