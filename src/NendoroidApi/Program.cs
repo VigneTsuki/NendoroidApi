@@ -33,6 +33,11 @@ builder.Services.AddAuthentication().AddJwtBearer(options =>
     };
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("SuperAdmin", policy => policy.RequireRole("SuperAdmin"));
+});
+
 builder.Services.AddScoped<DbSession>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<IUsuarioRepository, UsuarioRepository>();

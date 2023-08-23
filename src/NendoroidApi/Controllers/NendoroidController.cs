@@ -65,7 +65,7 @@ namespace NendoroidApi.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "SuperAdmin")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ResponseBase>> Delete([FromQuery] string? numero = null)
