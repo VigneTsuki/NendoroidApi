@@ -93,5 +93,24 @@ namespace NendoroidApi.Data.Repository
 
             return nendoroid;
         }
+
+        public async Task EditarNendoroid(Nendoroid nendoroid)
+        {
+            string sql = "UPDATE NENDOROID SET NOME = @NOME, NUMERO = @NUMERO, PRECOJPY = @PRECOJPY, " +
+                          "DATALANCAMENTO = @DATALANCAMENTO, ESCULTOR = @ESCULTOR, COOPERACAO = @COOPERACAO, " +
+                          "IDSERIE = @IDSERIE WHERE ID = @ID";
+
+            var parametros = new DynamicParameters();
+            parametros.Add("ID", nendoroid.Id);
+            parametros.Add("NOME", nendoroid.Nome);
+            parametros.Add("NUMERO", nendoroid.Numero);
+            parametros.Add("PRECOJPY", nendoroid.PrecoJpy);
+            parametros.Add("DATALANCAMENTO", nendoroid.DataLancamento);
+            parametros.Add("ESCULTOR", nendoroid.Escultor);
+            parametros.Add("COOPERACAO", nendoroid.Cooperacao);
+            parametros.Add("IDSERIE", nendoroid.IdSerie);
+
+            await _session.Connection.ExecuteAsync(sql, parametros, _session.Transaction);
+        }
     }
 }

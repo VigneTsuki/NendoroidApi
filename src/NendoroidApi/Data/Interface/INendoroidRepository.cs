@@ -13,5 +13,6 @@ namespace NendoroidApi.Data.Interface
         Task<IEnumerable<Nendoroid>> BuscarNendoroidsPaginado(int numeroPagina, int TamanhoPagina);
         Task<Nendoroid?> BuscarNendoroidPorId(int id);
         Task<Nendoroid?> BuscarNendoroidPorNumero(string numero);
+        Task EditarNendoroid(Nendoroid nendoroid);
     }
 }

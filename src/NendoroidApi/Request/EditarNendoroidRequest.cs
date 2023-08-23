@@ -3,37 +3,44 @@ using FluentValidation.Results;
 
 namespace NendoroidApi.Request
 {
-    public class CadastroNendoroidRequest
+    public class EditarNendoroidRequest
     {
+        public int Id { get; set; }
         public string Nome { get; set; }
         public string Numero { get; set; }
         public decimal PrecoJpy { get; set; }
         public string? DataLancamento { get; set; }
         public string? Escultor { get; set; }
         public string? Cooperacao { get; set; }
-        public int IdSerie { get; set; }
+        public int? IdSerie { get; set; }
 
         public ValidationResult ValidarRequest()
         {
-            return new CadastroNendoroidRequestValidator().Validate(this);
+            return new EditarNendoroidRequestValidator().Validate(this);
         }
     }
 
-    public class CadastroNendoroidRequestValidator : AbstractValidator<CadastroNendoroidRequest>
+    public class EditarNendoroidRequestValidator : AbstractValidator<EditarNendoroidRequest>
     {
-        public CadastroNendoroidRequestValidator()
-        { 
-            RuleFor(request => request.Nome)
+        public EditarNendoroidRequestValidator()
+        {
+            RuleFor(request => request.Id)
                 .NotEmpty()
-                .WithMessage("O campo Nome é obrigatório.")
-                .MaximumLength(250)
-                .WithMessage("O campo Nome aceita no máximo 250 caracteres.");
+                .WithMessage("O campo Id é obrigatório.");
 
-            RuleFor(request => request.Numero)
-                .NotEmpty()
-                .WithMessage("O campo Numero é obrigatório.")
-                .MaximumLength(20)
-                .WithMessage("O campo Numero aceita no máximo 20 caracteres.");
+            When(request => request.Nome != null, () =>
+            {
+                RuleFor(request => request.Nome)
+                    .MaximumLength(250)
+                    .WithMessage("O campo Nome aceita no máximo 250 caracteres.");
+            });
+
+            When(request => request.Numero != null, () =>
+            {
+                RuleFor(request => request.Numero)
+                    .MaximumLength(20)
+                    .WithMessage("O campo Nome aceita no máximo 20 caracteres.");
+            });
 
             When(request => request.PrecoJpy != 0, () =>
             {
@@ -62,10 +69,6 @@ namespace NendoroidApi.Request
                     .MaximumLength(250)
                     .WithMessage("O campo Cooperacao aceita no máximo 250 caracteres.");
             });
-
-            RuleFor(request => request.IdSerie)
-                .GreaterThan(0)
-                .WithMessage("O campo IdSerie é obrigatório.");
         }
     }
 }

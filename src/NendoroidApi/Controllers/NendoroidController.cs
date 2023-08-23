@@ -153,5 +153,45 @@ namespace NendoroidApi.Controllers
 
             return Ok(new ResponseBase(true, null, resposta));
         }
+
+        [HttpPut]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ResponseBase>> Put(EditarNendoroidRequest request)
+        {
+            if (request == null)
+                return BadRequest(new ResponseBase(false, "Há algo errado com a requisição enviada. Por favor, faça os ajustes e tente novamente."));
+
+            var validacaoRequest = request.ValidarRequest();
+            if (!validacaoRequest.IsValid)
+                return BadRequest(new ResponseBase(false, validacaoRequest.Errors.FirstOrDefault()?.ErrorMessage));
+
+            DateTime? data = null;
+
+            if (request.DataLancamento != null)
+                data = DateTime.ParseExact(request.DataLancamento!, "yyyy-MM", CultureInfo.InvariantCulture);
+
+            var nendo = await _nendoroidRepository.BuscarNendoroidPorId(request.Id);
+
+            if (nendo == null)
+                return BadRequest(new ResponseBase(false, "Nendoroid não encontrada."));
+
+            var nendoroid = new Nendoroid
+            {
+                Id = request.Id,
+                Nome = request.Nome ?? nendo.Nome,
+                Numero = request.Numero ?? nendo.Numero,
+                PrecoJpy = request.PrecoJpy != 0 ? request.PrecoJpy : nendo.PrecoJpy,
+                DataLancamento = data ?? nendo.DataLancamento,
+                Escultor = request.Escultor ?? nendo.Escultor,
+                Cooperacao = request.Cooperacao ?? nendo.Cooperacao,
+                IdSerie = request.IdSerie ?? nendo.IdSerie,
+            };
+
+            await _nendoroidRepository.EditarNendoroid(nendoroid);
+
+            return Ok(new ResponseBase(true, "Nendoroid alterada com sucesso"));
+        }
     }
 }

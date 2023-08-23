@@ -5,6 +5,7 @@ using NendoroidApi.Controllers;
 using NendoroidApi.Data.Interface;
 using NendoroidApi.Data.Model;
 using NendoroidApi.Request;
+using Org.BouncyCastle.Asn1.Ocsp;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -206,6 +207,66 @@ namespace ApiTests.Controllers
                 .ReturnsAsync(It.IsAny<Nendoroid>());
 
             var resultado = await nendoroidController.BuscarPorNumero(It.IsAny<string>());
+
+            Assert.Equal(StatusCodes.Status400BadRequest, (resultado.Result as ObjectResult)?.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeveEditarNendoroid()
+        {
+            mockNendoroidRepository.Setup(n => n.BuscarNendoroidPorId(It.IsAny<int>()))
+                .ReturnsAsync(new Nendoroid { Id = 1 });
+
+            var request = new EditarNendoroidRequest
+            {
+                Id = 1,
+                Numero = "1100",
+                Nome = "Magamihara Nadeshiko",
+                DataLancamento = DateTime.Now.ToString("yyyy-MM"),
+                Cooperacao = "Nendoron",
+                PrecoJpy = 6000,
+                Escultor = "Nendoron",
+                IdSerie = 1
+            };
+
+            var resultado = await nendoroidController.Put(request);
+
+            Assert.Equal(StatusCodes.Status200OK, (resultado.Result as ObjectResult)?.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeveRetornarBadRequestAoEditarPoisRequestNula()
+        {
+            var resultado = await nendoroidController.Put(It.IsAny<EditarNendoroidRequest>());
+
+            Assert.Equal(StatusCodes.Status400BadRequest, (resultado.Result as ObjectResult)?.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeveRetornarBadRequestAoEditarPoisRequestInvalida()
+        {
+            var request = new EditarNendoroidRequest
+            {
+                Id = 0
+            };
+
+            var resultado = await nendoroidController.Put(request);
+
+            Assert.Equal(StatusCodes.Status400BadRequest, (resultado.Result as ObjectResult)?.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeveRetornarBadRequestAoEditarPoisNendoroidNaoEncontrada()
+        {
+            mockNendoroidRepository.Setup(n => n.BuscarNendoroidPorId(It.IsAny<int>()))
+                .ReturnsAsync(It.IsAny<Nendoroid>());
+
+            var request = new EditarNendoroidRequest
+            {
+                Id = 1
+            };
+
+            var resultado = await nendoroidController.Put(request);
 
             Assert.Equal(StatusCodes.Status400BadRequest, (resultado.Result as ObjectResult)?.StatusCode);
         }
